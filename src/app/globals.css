@@ -1,21 +1,164 @@
 @tailwind base;
-@tailwind components;
-@tailwind utilities;
+  @tailwind components;
+  @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @font-face {
+    font-family: "Lora";
+    src: url("../../public/fonts/Lora-VariableFont_wght.ttf");
   }
-}
+  @font-face {
+    font-family: "Raleway";
+    src: url("../../public/fonts/Raleway-VariableFont_wght.ttf");
+  }
+  @font-face {
+    font-family: "Gluten";
+    src: url("../../public/fonts/Gluten-VariableFont_slnt,wght.ttf");
+  }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+  @layer base {
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 222.2 84% 4.9%;
+
+      --card: 0 0% 100%;
+      --card-foreground: 222.2 84% 4.9%;
+
+      --popover: 0 0% 100%;
+      --popover-foreground: 222.2 84% 4.9%;
+
+      --primary: 222.2 47.4% 11.2%;
+      --primary-foreground: 210 40% 98%;
+
+      --secondary: 210 40% 96.1%;
+      --secondary-foreground: 222.2 47.4% 11.2%;
+
+      --muted: 210 40% 96.1%;
+      --muted-foreground: 215.4 16.3% 46.9%;
+
+      --accent: 210 40% 96.1%;
+      --accent-foreground: 222.2 47.4% 11.2%;
+
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 210 40% 98%;
+
+      --border: 214.3 31.8% 91.4%;
+      --input: 214.3 31.8% 91.4%;
+      --ring: 222.2 84% 4.9%;
+
+      --radius: 0.5rem;
+    }
+
+    .dark {
+      --background: 222.2 84% 4.9%;
+      --foreground: 210 40% 98%;
+
+      --card: 222.2 84% 4.9%;
+      --card-foreground: 210 40% 98%;
+
+      --popover: 222.2 84% 4.9%;
+      --popover-foreground: 210 40% 98%;
+
+      --primary: 210 40% 98%;
+      --primary-foreground: 222.2 47.4% 11.2%;
+
+      --secondary: 217.2 32.6% 17.5%;
+      --secondary-foreground: 210 40% 98%;
+
+      --muted: 217.2 32.6% 17.5%;
+      --muted-foreground: 215 20.2% 65.1%;
+
+      --accent: 217.2 32.6% 17.5%;
+      --accent-foreground: 210 40% 98%;
+
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 210 40% 98%;
+
+      --border: 217.2 32.6% 17.5%;
+      --input: 217.2 32.6% 17.5%;
+      --ring: 212.7 26.8% 83.9%;
+    }
+  }
+
+  @layer base {
+    * {
+      @apply border-border;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
+  }
+  @layer base {
+    /* inter var - latin */
+
+   
+    .cursor-newtab {
+      cursor: url('/images/new-tab.png') 10 10, pointer;
+    }
+   
+    h1 {
+      @apply text-2xl  md:text-4xl;
+    }
+   
+    h2 {
+      @apply  text-xl  md:text-3xl;
+    }
+   
+    h3 {
+      @apply  text-lg  md:text-2xl;
+    }
+   
+    h4 {
+      @apply  text-base font-bold md:text-lg;
+    }
+   
+    body {
+      @apply text-sm md:text-base;
+    }
+   
+    .layout {
+      /* 750px */
+      /* max-width: 43.75rem; */
+   
+      /* 1100px */
+      max-width: 68.75rem;
+      @apply mx-auto w-11/12;
+    }
+   
+    .bg-dark a.custom-link {
+      @apply border-gray-200 hover:border-gray-200/0;
+    }
+   
+    /* Class to adjust with sticky footer */
+    .min-h-main {
+      @apply min-h-[calc(100vh-56px)];
+    }
+  }
+   
+  @layer utilities {
+    .animated-underline {
+      background-image: linear-gradient(#33333300, #33333300), linear-gradient(to
+            right, var(--clr-primary-400), var(--clr-primary-500));
+      background-size: 100% 2px, 0 2px;
+      background-position: 100% 100%, 0 100%;
+      background-repeat: no-repeat;
+      transition: 0.3s ease;
+      transition-property: background-size, color, background-color, border-color;
+    }
+    .animated-underline:hover,
+    .animated-underline:focus-visible {
+      background-size: 0 2px, 100% 2px;
+    }
+  }
+
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  }
+  
+ 
+  .scrollbar-hide {
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+  }
+
+  .mainpicturezoom {    transition-duration: 5000ms;}
