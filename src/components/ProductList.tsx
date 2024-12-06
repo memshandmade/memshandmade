@@ -3,21 +3,48 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Prisma } from '@prisma/client'
 
-type ProductWithoutDates = Omit<Prisma.ProductGetPayload<{}>, 'createdAt' | 'updatedAt' | 'price'> & {
+type ProductWithoutDates = Omit<Prisma.ProductGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    intro: true;
+    description: true;
+    price: true;
+    image1: true;
+    image2: true;
+    image3: true;
+    image4: true;
+    image5: true;
+    published: true;
+    soldOut: true;
+  }
+}>, 'price'> & {
   price: string;
 }
 
 export default async function ProductList() {
   const products = await prisma.product.findMany({
     where: { published: true, soldOut: false },
+    select: {
+      id: true,
+      name: true,
+      intro: true,
+      description: true,
+      price: true,
+      image1: true,
+      image2: true,
+      image3: true,
+      image4: true,
+      image5: true,
+      published: true,
+      soldOut: true,
+    }
   })
 
   // Serialize the products data
   const serializedProducts: ProductWithoutDates[] = products.map(product => ({
     ...product,
     price: product.price.toString(),
-    createdAt: undefined,
-    updatedAt: undefined,
   }))
 
   return (
