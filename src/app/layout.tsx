@@ -33,7 +33,7 @@ export default function RootLayout({
       >
             <header className="w-full py-6 bg-background">
       <div className="container flex flex-col items-center justify-center gap-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-2xl font-bold" prefetch={false}>
+        <div className="inline-flex items-center gap-2 text-2xl font-bold">
         
         <Image
           src="/memshandmade-com-logo.png" 
@@ -43,21 +43,9 @@ export default function RootLayout({
           height={76}
           className="object-cover w-full "
         />
-          
-        </Link>
-        <nav className="flex-col font-raleway items-center gap-4 md:flex md:flex-row md:gap-6 ">
-         
-          <Link href="/" className="text-lg font-medium mr-5 hover:underline" prefetch={false}>
-            Home
-          </Link>
-          <Link href="/" className="text-lg font-medium mr-5 hover:underline" prefetch={false}>
-            Products
-          </Link>
-          <Link href="/" className="text-lg font-medium hover:underline" prefetch={false}>
-            Contact
-          </Link>
-         
-        </nav>
+      </div>
+       
+
 
         
  
