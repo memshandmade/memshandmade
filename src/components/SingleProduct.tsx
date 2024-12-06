@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Prisma } from '@prisma/client'
-import { CheckCircle2, MoreVertical, XCircle } from "lucide-react"
+
 
 interface Product {
   id: number
@@ -48,12 +48,12 @@ export default function SingleProduct({ product }: { product: Product }) {
           {product.soldOut? (
                             <>
                                 
-                                <CheckCircle2 />
+                                <p className="stroke-destructive">Sold Out</p>
                             </>
                         ) : (
                             <>
                                 
-                                <XCircle className="stroke-destructive"/>
+                                <p>Available</p>
                             </>
                         )}
 

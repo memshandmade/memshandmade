@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import Image from 'next/image'
 import Link from 'next/link'
-import { CheckCircle2, MoreVertical, XCircle } from "lucide-react"
+
 
 export default async function ProductList() {
   const products = await prisma.product.findMany({
@@ -28,7 +28,7 @@ export default async function ProductList() {
           {product.soldOut? (
                             <>
                                 
-                                <XCircle className="stroke-destructive"/><p>Sold Out</p>
+                                <p>Sold Out</p>
                             </>
                         ) : (
                             <>
