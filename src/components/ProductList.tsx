@@ -1,19 +1,28 @@
 import { prisma } from '@/lib/prisma'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Prisma } from '@prisma/client'
 
+type ProductWithoutDates = Omit<Prisma.ProductGetPayload<{}>, 'createdAt' | 'updatedAt' | 'price'> & {
+  price: string;
+}
 
 export default async function ProductList() {
   const products = await prisma.product.findMany({
-    where: { published: true },
+    where: { published: true, soldOut: false },
   })
 
   // Serialize the products data
-  const serializedProducts = JSON.parse(JSON.stringify(products))
+  const serializedProducts: ProductWithoutDates[] = products.map(product => ({
+    ...product,
+    price: product.price.toString(),
+    createdAt: undefined,
+    updatedAt: undefined,
+  }))
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {serializedProducts.map((product: any) => (
+      {serializedProducts.map((product) => (
         <div key={product.id} className="border rounded-lg p-4">
           <Image
             src={product.image1 || '/placeholder.png'}
@@ -25,17 +34,6 @@ export default async function ProductList() {
           <h2 className="text-xl font-semibold">{product.name}</h2>
           <div className="text-gray-600 mb-2" dangerouslySetInnerHTML={{ __html: product.intro }} />
           <p className="font-bold mb-2">${parseFloat(product.price).toFixed(2)}</p>
-          {product.soldOut? (
-                            <>
-                                
-                                <p>Sold Out</p>
-                            </>
-                        ) : (
-                            <>
-                                
-                                <p className="text-green-500">Available</p>
-                            </>
-                        )}          
           <Link 
             href={`/products/${product.id}`}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 inline-block"
