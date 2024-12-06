@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Prisma } from '@prisma/client'
+import { unstable_noStore as noStore } from 'next/cache'
+
 
 type ProductWithoutDates = Omit<Prisma.ProductGetPayload<{
   select: {
@@ -23,6 +25,7 @@ type ProductWithoutDates = Omit<Prisma.ProductGetPayload<{
 }
 
 export default async function ProductList() {
+  noStore()
   const products = await prisma.product.findMany({
     where: { published: true, soldOut: false },
     select: {
