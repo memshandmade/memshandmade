@@ -69,7 +69,7 @@ export default function NewProductForm() {
         const errorData = await response.json()
         alert(`Failed to create product: ${errorData.error || 'Unknown error'}`)
       }
-    } catch (error) {
+    } catch {
       alert('An error occurred while creating the product')
     }
   }

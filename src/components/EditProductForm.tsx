@@ -99,7 +99,7 @@ export default function EditProductForm({ product }: { product: Product }) {
         const errorData = await response.json()
         alert(`Failed to update product: ${errorData.error || 'Unknown error'}`)
       }
-    } catch (error) {
+    } catch {
       alert('An error occurred while updating the product')
     }
   }
