@@ -24,6 +24,13 @@ export default function NewProductForm() {
       }), 
     ],
     content: '',
+    editorProps: {
+      attributes: {
+        class:
+          "rounded-md border min-h-[150px] border-input bg-background focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
+          
+      },
+    },    
     immediatelyRender: false,
   })
 
@@ -37,6 +44,13 @@ export default function NewProductForm() {
       }),      
     ],
     content: '',
+    editorProps: {
+      attributes: {
+        class:
+          "rounded-md border min-h-[150px] border-input bg-background focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
+          
+      },
+    },    
     immediatelyRender: false,
   })
 

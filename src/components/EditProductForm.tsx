@@ -47,6 +47,13 @@ export default function EditProductForm({ product }: { product: Product }) {
           }), 
     ],
     content: product.intro,
+    editorProps: {
+      attributes: {
+        class:
+          "rounded-md border min-h-[150px] border-input bg-background focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
+          
+      },
+    },    
     immediatelyRender: false,
   })
 
@@ -60,6 +67,13 @@ export default function EditProductForm({ product }: { product: Product }) {
           }), 
     ],
     content: product.description,
+    editorProps: {
+      attributes: {
+        class:
+          "rounded-md border min-h-[150px] border-input bg-background focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
+          
+      },
+    },    
     immediatelyRender: false,
   })
 
