@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from 'next/image'
-import ToolBar from "@/components/ToolBar";
 
 interface Product {
   id: number
@@ -35,46 +34,17 @@ export default function EditProductForm({ product }: { product: Product }) {
   ].filter((img): img is string => img !== null))
   const [published, setPublished] = useState(product.published)
   const [soldOut, setSoldOut] = useState(product.soldOut)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   const introEditor = useEditor({
-    extensions: [
-        StarterKit.configure({   
-            // Configure an included extension
-            heading: {
-              levels: [1, 2, 3],
-            },
-          }), 
-    ],
+    extensions: [StarterKit],
     content: product.intro,
-    editorProps: {
-      attributes: {
-        class:
-          "rounded-md border min-h-[150px] border-input bg-background focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
-          
-      },
-    },    
-    immediatelyRender: false,
   })
 
   const descriptionEditor = useEditor({
-    extensions: [
-        StarterKit.configure({   
-            // Configure an included extension
-            heading: {
-              levels: [1, 2, 3],
-            },
-          }), 
-    ],
+    extensions: [StarterKit],
     content: product.description,
-    editorProps: {
-      attributes: {
-        class:
-          "rounded-md border min-h-[150px] border-input bg-background focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
-          
-      },
-    },    
-    immediatelyRender: false,
   })
 
   useEffect(() => {
@@ -107,6 +77,7 @@ export default function EditProductForm({ product }: { product: Product }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError(null)
     const formData = new FormData()
     formData.append('name', name)
     formData.append('intro', introEditor?.getHTML() || '')
@@ -118,20 +89,29 @@ export default function EditProductForm({ product }: { product: Product }) {
       formData.append(`image${index + 1}`, image)
     })
 
-    const response = await fetch(`/api/admin/products/${product.id}`, {
-      method: 'PUT',
-      body: formData,
-    })
+    try {
+      const response = await fetch(`/api/admin/products/${product.id}`, {
+        method: 'PUT',
+        body: formData,
+      })
 
-    if (response.ok) {
-      router.push('/admin')
-    } else {
-      console.error('Failed to update product')
+      if (response.ok) {
+        router.push('/admin')
+      } else {
+        const errorData = await response.json()
+        setError(errorData.error || 'Failed to update product')
+      }
+    } catch (error) {
+      setError('An error occurred while updating the product')
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <strong className="font-bold">Error:</strong>
+        <span className="block sm:inline"> {error}</span>
+      </div>}
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
         <input
@@ -145,12 +125,10 @@ export default function EditProductForm({ product }: { product: Product }) {
       </div>
       <div>
         <label htmlFor="intro" className="block text-sm font-medium text-gray-700">Intro</label>
-        <ToolBar editor={introEditor} />
         <EditorContent editor={introEditor} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
       </div>
       <div>
         <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-        <ToolBar editor={descriptionEditor} />
         <EditorContent editor={descriptionEditor} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
       </div>
       <div>

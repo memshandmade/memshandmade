@@ -14,6 +14,7 @@ interface Product {
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([])
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -23,14 +24,14 @@ export default function AdminDashboard() {
   const fetchProducts = async () => {
     try {
       const response = await fetch('/api/admin/products')
-      if (response.ok) {
-        const data = await response.json()
-        setProducts(data)
-      } else {
-        console.error('Failed to fetch products')
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
+      const data = await response.json()
+      setProducts(data)
     } catch (error) {
       console.error('Error fetching products:', error)
+      setError('Failed to fetch products. Please try again later.')
     }
   }
 
@@ -74,6 +75,26 @@ export default function AdminDashboard() {
     }
   }
 
+  const handleDelete = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      try {
+        const response = await fetch(`/api/admin/products/${id}`, {
+          method: 'DELETE',
+        })
+        if (response.ok) {
+          fetchProducts()
+        } else {
+          const errorData = await response.json()
+          console.error('Failed to delete product:', errorData.error)
+          alert(`Failed to delete product: ${errorData.error}`)
+        }
+      } catch (error) {
+        console.error('Error deleting product:', error)
+        alert('An error occurred while deleting the product')
+      }
+    }
+  }
+
   const handleLogout = async () => {
     try {
       await fetch('/api/admin/logout', { method: 'POST' })
@@ -90,6 +111,12 @@ export default function AdminDashboard() {
 
   return (
     <div>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong className="font-bold">Error:</strong>
+          <span className="block sm:inline"> {error}</span>
+        </div>
+      )}
       <div className="flex justify-between items-center mb-4">
         <Link href="/admin/new-product" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
           Create New Product
@@ -148,9 +175,15 @@ export default function AdminDashboard() {
                 {formatPrice(product.price)}
               </td>
               <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                <Link href={`/admin/edit-product/${product.id}`} className="text-blue-500 hover:underline">
+                <Link href={`/admin/edit-product/${product.id}`} className="text-blue-500 hover:underline mr-2">
                   Edit
                 </Link>
+                <button
+                  onClick={() => handleDelete(product.id)}
+                  className="text-red-500 hover:underline"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

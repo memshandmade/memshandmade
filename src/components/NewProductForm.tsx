@@ -5,53 +5,25 @@ import { useRouter } from 'next/navigation'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from 'next/image'
-import ToolBar from "@/components/ToolBar";
 
 export default function NewProductForm() {
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const [images, setImages] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const [published, setPublished] = useState(false)
+  const [soldOut, setSoldOut] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   const introEditor = useEditor({
-    extensions: [
-      StarterKit.configure({   
-        // Configure an included extension
-        heading: {
-          levels: [1, 2, 3],
-        },
-      }), 
-    ],
+    extensions: [StarterKit],
     content: '',
-    editorProps: {
-      attributes: {
-        class:
-          "rounded-md border min-h-[150px] border-input bg-background focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
-          
-      },
-    },    
-    immediatelyRender: false,
   })
 
   const descriptionEditor = useEditor({
-    extensions: [
-      StarterKit.configure({   
-        // Configure an included extension
-        heading: {
-          levels: [1, 2, 3],
-        },
-      }),      
-    ],
+    extensions: [StarterKit],
     content: '',
-    editorProps: {
-      attributes: {
-        class:
-          "rounded-md border min-h-[150px] border-input bg-background focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
-          
-      },
-    },    
-    immediatelyRender: false,
   })
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,29 +47,41 @@ export default function NewProductForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError(null)
     const formData = new FormData()
     formData.append('name', name)
     formData.append('intro', introEditor?.getHTML() || '')
     formData.append('description', descriptionEditor?.getHTML() || '')
     formData.append('price', price)
+    formData.append('published', published.toString())
+    formData.append('soldOut', soldOut.toString())
     images.forEach((image, index) => {
       formData.append(`image${index + 1}`, image)
     })
 
-    const response = await fetch('/api/products', {
-      method: 'POST',
-      body: formData,
-    })
+    try {
+      const response = await fetch('/api/admin/products', {
+        method: 'POST',
+        body: formData,
+      })
 
-    if (response.ok) {
-      router.push('/admin')
-    } else {
-      console.error('Failed to create product')
+      if (response.ok) {
+        router.push('/admin')
+      } else {
+        const errorData = await response.json()
+        setError(errorData.error || 'Failed to create product')
+      }
+    } catch (error) {
+      setError('An error occurred while creating the product')
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <strong className="font-bold">Error:</strong>
+        <span className="block sm:inline"> {error}</span>
+      </div>}
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
         <input
@@ -111,12 +95,10 @@ export default function NewProductForm() {
       </div>
       <div>
         <label htmlFor="intro" className="block text-sm font-medium text-gray-700">Intro</label>
-        <ToolBar editor={introEditor} />
         <EditorContent editor={introEditor} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
       </div>
       <div>
         <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-        <ToolBar editor={descriptionEditor} />
         <EditorContent editor={descriptionEditor} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
       </div>
       <div>
@@ -155,6 +137,28 @@ export default function NewProductForm() {
             </div>
           ))}
         </div>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          <input
+            type="checkbox"
+            checked={published}
+            onChange={(e) => setPublished(e.target.checked)}
+            className="mr-2"
+          />
+          Published
+        </label>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          <input
+            type="checkbox"
+            checked={soldOut}
+            onChange={(e) => setSoldOut(e.target.checked)}
+            className="mr-2"
+          />
+          Sold Out
+        </label>
       </div>
       <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
         Create Product
