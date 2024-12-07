@@ -21,12 +21,12 @@ export default function Footer() {
             <span className="sr-only">Back to top</span>
           </Link>
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            &copy; 2024 Acme Inc. All rights reserved.
+            &copy; 2024 Memshandmade.com All rights reserved.
           </p>
         </div>
         <div className="flex items-center gap-4">
           <Link
-            href="#"
+            href="https://www.facebook.com/memshandmade"
             className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
             prefetch={false}
           >
@@ -34,21 +34,14 @@ export default function Footer() {
             <span className="sr-only">Facebook</span>
           </Link>
           <Link
-            href="#"
+            href="https://www.instagram.com/memshandmade"
             className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
             prefetch={false}
           >
             <InstagramIcon className="h-6 w-6" />
             <span className="sr-only">Instagram</span>
           </Link>
-          <Link
-            href="#"
-            className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-            prefetch={false}
-          >
-            <LinkedinIcon className="h-6 w-6" />
-            <span className="sr-only">LinkedIn</span>
-          </Link>
+
         </div>
       </div>
     </footer>

@@ -24,7 +24,7 @@ export default function SingleProduct({ product }: { product: Product }) {
   return (
     <div className="container mx-auto px-4 py-8">
       <Link href="/" className="text-blue-500 hover:underline mb-4 inline-block">&larr; Back to all products</Link>
-      <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+      <h1 className="text-3xl  mb-4 font-lora">{product.name}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <div className="grid grid-cols-2 gap-4">
