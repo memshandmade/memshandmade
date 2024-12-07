@@ -13,7 +13,6 @@ export default function NewProductForm() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [published, setPublished] = useState(false)
   const [soldOut, setSoldOut] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   const introEditor = useEditor({
@@ -47,7 +46,6 @@ export default function NewProductForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
     const formData = new FormData()
     formData.append('name', name)
     formData.append('intro', introEditor?.getHTML() || '')
@@ -69,19 +67,15 @@ export default function NewProductForm() {
         router.push('/admin')
       } else {
         const errorData = await response.json()
-        setError(errorData.error || 'Failed to create product')
+        alert(`Failed to create product: ${errorData.error || 'Unknown error'}`)
       }
     } catch (error) {
-      setError('An error occurred while creating the product')
+      alert('An error occurred while creating the product')
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-        <strong className="font-bold">Error:</strong>
-        <span className="block sm:inline"> {error}</span>
-      </div>}
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
         <input

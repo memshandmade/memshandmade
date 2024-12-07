@@ -34,7 +34,6 @@ export default function EditProductForm({ product }: { product: Product }) {
   ].filter((img): img is string => img !== null))
   const [published, setPublished] = useState(product.published)
   const [soldOut, setSoldOut] = useState(product.soldOut)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   const introEditor = useEditor({
@@ -77,7 +76,6 @@ export default function EditProductForm({ product }: { product: Product }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
     const formData = new FormData()
     formData.append('name', name)
     formData.append('intro', introEditor?.getHTML() || '')
@@ -99,19 +97,15 @@ export default function EditProductForm({ product }: { product: Product }) {
         router.push('/admin')
       } else {
         const errorData = await response.json()
-        setError(errorData.error || 'Failed to update product')
+        alert(`Failed to update product: ${errorData.error || 'Unknown error'}`)
       }
     } catch (error) {
-      setError('An error occurred while updating the product')
+      alert('An error occurred while updating the product')
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-        <strong className="font-bold">Error:</strong>
-        <span className="block sm:inline"> {error}</span>
-      </div>}
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
         <input
