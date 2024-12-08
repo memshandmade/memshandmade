@@ -33,7 +33,10 @@ async function processImage(file: File): Promise<Buffer> {
   return processedBuffer
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = parseInt(params.id)
   const formData = await request.formData()
 
@@ -89,7 +92,10 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = parseInt(params.id)
   const { published, soldOut } = await request.json()
 
@@ -109,7 +115,10 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = parseInt(params.id)
 
   try {
