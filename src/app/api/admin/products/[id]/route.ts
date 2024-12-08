@@ -35,9 +35,9 @@ async function processImage(file: File): Promise<Buffer> {
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const id = parseInt(params.id)
+  const id = parseInt(context.params.id)
   const formData = await request.formData()
 
   const name = formData.get('name') as string
@@ -94,9 +94,9 @@ export async function PUT(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const id = parseInt(params.id)
+  const id = parseInt(context.params.id)
   const { published, soldOut } = await request.json()
 
   try {
@@ -117,9 +117,9 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const id = parseInt(params.id)
+  const id = parseInt(context.params.id)
 
   try {
     const product = await prisma.product.delete({
