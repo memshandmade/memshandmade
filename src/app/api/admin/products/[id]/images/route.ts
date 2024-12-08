@@ -31,10 +31,9 @@ async function processImage(file: Buffer): Promise<Buffer> {
 }
 
 export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const productId = parseInt(params.id)
+    request: NextRequest & { params: { id: string } }
+): Promise<NextResponse> {
+  const productId = parseInt(request.params.id)
 
   try {
     const formData = await request.formData()
