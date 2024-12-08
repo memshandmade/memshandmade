@@ -46,12 +46,11 @@ export default function AdminDashboard() {
         fetchProducts()
       } else {
         const errorData = await response.json()
-        console.error('Failed to update product:', errorData.error)
-        alert(`Failed to update product: ${errorData.error}`)
+        throw new Error(errorData.error || 'Failed to update product')
       }
     } catch (error) {
       console.error('Error updating product:', error)
-      alert('An error occurred while updating the product')
+      alert(`Failed to update product: ${(error as Error).message}`)
     }
   }
 
@@ -66,12 +65,11 @@ export default function AdminDashboard() {
         fetchProducts()
       } else {
         const errorData = await response.json()
-        console.error('Failed to update product:', errorData.error)
-        alert(`Failed to update product: ${errorData.error}`)
+        throw new Error(errorData.error || 'Failed to update product')
       }
     } catch (error) {
       console.error('Error updating product:', error)
-      alert('An error occurred while updating the product')
+      alert(`Failed to update product: ${(error as Error).message}`)
     }
   }
 
@@ -85,12 +83,11 @@ export default function AdminDashboard() {
           fetchProducts()
         } else {
           const errorData = await response.json()
-          console.error('Failed to delete product:', errorData.error)
-          alert(`Failed to delete product: ${errorData.error}`)
+          throw new Error(errorData.error || 'Failed to delete product')
         }
       } catch (error) {
         console.error('Error deleting product:', error)
-        alert('An error occurred while deleting the product')
+        alert(`Failed to delete product: ${(error as Error).message}`)
       }
     }
   }

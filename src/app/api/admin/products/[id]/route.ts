@@ -119,24 +119,41 @@ export async function DELETE(
   const id = parseInt(request.params.id)
 
   try {
-    const product = await prisma.product.delete({
+    // First, fetch the product to get its image URLs
+    const product = await prisma.product.findUnique({
+      where: { id },
+      select: { image1: true, image2: true, image3: true, image4: true, image5: true }
+    })
+
+    if (!product) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+    }
+
+    // Delete the product from the database
+    await prisma.product.delete({
       where: { id },
     })
 
     // Delete images from Cloudinary
     const imagesToDelete = [product.image1, product.image2, product.image3, product.image4, product.image5]
       .filter((url): url is string => url !== null)
+    
     for (const imageUrl of imagesToDelete) {
-      const publicId = imageUrl.split('/').pop()?.split('.')[0] ?? ''
-      if (publicId) {
-        await cloudinary.uploader.destroy(`soft-toys/${publicId}`)
+      try {
+        const publicId = imageUrl.split('/').pop()?.split('.')[0] ?? ''
+        if (publicId) {
+          await cloudinary.uploader.destroy(`soft-toys/${publicId}`)
+        }
+      } catch (error) {
+        console.error(`Failed to delete image from Cloudinary: ${imageUrl}`, error)
+        // Continue with the next image even if one fails
       }
     }
 
     return NextResponse.json({ message: 'Product deleted successfully' })
   } catch (error) {
     console.error('Failed to delete product:', error)
-    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to delete product', details: (error as Error).message }, { status: 500 })
   }
 }
 
