@@ -92,8 +92,9 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 })
   }
 }
+export async function Patch(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   const id = parseInt(params.id)
   const { published, soldOut } = await request.json()
 
