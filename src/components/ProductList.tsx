@@ -27,7 +27,7 @@ type ProductWithoutDates = Omit<Prisma.ProductGetPayload<{
 
 const getProducts = cache(async () => {
   const products = await prisma.product.findMany({
-    where: { published: true, soldOut: false },
+    where: { published: true},
     select: {
       id: true,
       name: true,
