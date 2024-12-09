@@ -94,41 +94,27 @@ export default function NewProductForm({}: NewProductFormProps) {
     setIsSubmitting(true)
 
     try {
-      const productData = {
-        name,
-        intro: introEditor?.getHTML() || '',
-        description: descriptionEditor?.getHTML() || '',
-        price: parseFloat(price),
-        published,
-        soldOut,
-      }
+      const formData = new FormData()
+      formData.append('name', name)
+      formData.append('intro', introEditor?.getHTML() || '')
+      formData.append('description', descriptionEditor?.getHTML() || '')
+      formData.append('price', price)
+      formData.append('published', published.toString())
+      formData.append('soldOut', soldOut.toString())
 
-      // First, create the product without images
+      // Append images
+      images.forEach((image, index) => {
+        formData.append(`image${index + 1}`, image)
+      })
+
+      // Create the product with all data including images
       const createResponse = await fetch('/api/admin/products', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(productData),
+        body: formData,
       })
 
       if (!createResponse.ok) {
         throw new Error('Failed to create product')
-      }
-
-      const { id: productId } = await createResponse.json()
-
-      // Then, upload images one by one
-      for (let i = 0; i < images.length; i++) {
-        const formData = new FormData()
-        formData.append('image', images[i])
-
-        const uploadResponse = await fetch(`/api/admin/products/${productId}/images`, {
-          method: 'POST',
-          body: formData,
-        })
-
-        if (!uploadResponse.ok) {
-          console.error(`Failed to upload image ${i + 1}`)
-        }
       }
 
       router.push('/admin')
@@ -230,4 +216,6 @@ export default function NewProductForm({}: NewProductFormProps) {
     </form>
   )
 }
+
+
 

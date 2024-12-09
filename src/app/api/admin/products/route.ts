@@ -11,18 +11,15 @@ cloudinary.config({
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
 
-async function processImage(file: File): Promise<Buffer> {
-  const arrayBuffer = await file.arrayBuffer()
-  const buffer = Buffer.from(arrayBuffer)
-  
-  let processedBuffer = await sharp(buffer)
+async function processImage(file: Buffer): Promise<Buffer> {
+  let processedBuffer = await sharp(file)
     .resize(1600, 1200, { fit: 'inside', withoutEnlargement: true })
     .toBuffer()
 
   if (processedBuffer.length > MAX_FILE_SIZE) {
     let quality = 80
     while (processedBuffer.length > MAX_FILE_SIZE && quality > 10) {
-      processedBuffer = await sharp(buffer)
+      processedBuffer = await sharp(file)
         .resize(1600, 1200, { fit: 'inside', withoutEnlargement: true })
         .jpeg({ quality })
         .toBuffer()
@@ -31,25 +28,6 @@ async function processImage(file: File): Promise<Buffer> {
   }
 
   return processedBuffer
-}
-
-export async function GET() {
-  try {
-    const products = await prisma.product.findMany({
-      select: { id: true, name: true, published: true, soldOut: true, price: true },
-    })
-    
-    // Convert Decimal to string for JSON serialization
-    const serializedProducts = products.map(product => ({
-      ...product,
-      price: product.price.toString()
-    }))
-    
-    return NextResponse.json(serializedProducts)
-  } catch (error) {
-    console.error('Failed to fetch products:', error)
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 })
-  }
 }
 
 export async function POST(request: NextRequest) {
@@ -68,7 +46,8 @@ export async function POST(request: NextRequest) {
     const image = formData.get(`image${i}`) as File | null
     if (image) {
       try {
-        const processedImageBuffer = await processImage(image)
+        const buffer = await image.arrayBuffer()
+        const processedImageBuffer = await processImage(Buffer.from(buffer))
         const base64Image = processedImageBuffer.toString('base64')
         const dataURI = `data:${image.type};base64,${base64Image}`
         
@@ -103,6 +82,25 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Failed to create product:', error)
     return NextResponse.json({ error: 'Failed to create product' }, { status: 500 })
+  }
+}
+
+export async function GET() {
+  try {
+    const products = await prisma.product.findMany({
+      select: { id: true, name: true, published: true, soldOut: true, price: true },
+    })
+    
+    // Convert Decimal to string for JSON serialization
+    const serializedProducts = products.map(product => ({
+      ...product,
+      price: product.price.toString()
+    }))
+    
+    return NextResponse.json(serializedProducts)
+  } catch (error) {
+    console.error('Failed to fetch products:', error)
+    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 })
   }
 }
 
