@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import SingleProduct from '@/components/SingleProduct'
 import { Prisma } from '@prisma/client'
 
-type Product = Prisma.ProductGetPayload<{}>
+type ProductWithoutDates = Omit<Prisma.ProductGetPayload<{}>, 'createdAt' | 'updatedAt'>
 
 interface PageProps {
   params: { id: string }
@@ -24,5 +24,9 @@ export default async function ProductPage({ params }: PageProps) {
     return notFound()
   }
 
-  return <SingleProduct product={product} />
+  // Remove date fields for serialization
+  const { createdAt, updatedAt, ...productWithoutDates } = product
+
+  return <SingleProduct product={productWithoutDates} />
 }
+
