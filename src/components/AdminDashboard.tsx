@@ -43,7 +43,8 @@ export default function AdminDashboard() {
         body: JSON.stringify({ published }),
       })
       if (response.ok) {
-        fetchProducts()
+        await fetchProducts()
+        router.refresh()
       } else {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to update product')
@@ -62,7 +63,8 @@ export default function AdminDashboard() {
         body: JSON.stringify({ soldOut }),
       })
       if (response.ok) {
-        fetchProducts()
+        await fetchProducts()
+        router.refresh()
       } else {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to update product')
@@ -80,7 +82,8 @@ export default function AdminDashboard() {
           method: 'DELETE',
         })
         if (response.ok) {
-          fetchProducts()
+          await fetchProducts()
+          router.refresh()
         } else {
           const errorData = await response.json()
           throw new Error(errorData.error || 'Failed to delete product')
@@ -110,9 +113,10 @@ export default function AdminDashboard() {
     <div>
       <Link 
         href="/"
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        onClick={() => {
-          // Force a hard refresh of the page
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4 inline-block"
+        onClick={(e) => {
+          e.preventDefault()
+          router.refresh()
           window.location.href = '/'
         }}
       >
@@ -199,3 +203,4 @@ export default function AdminDashboard() {
     </div>
   )
 }
+

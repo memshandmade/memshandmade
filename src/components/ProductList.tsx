@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Prisma } from '@prisma/client'
+import { cache } from 'react'
 
 type ProductWithoutDates = Omit<Prisma.ProductGetPayload<{
   select: {
@@ -22,7 +23,7 @@ type ProductWithoutDates = Omit<Prisma.ProductGetPayload<{
   price: string;
 }
 
-export default async function ProductList() {
+const getProducts = cache(async () => {
   const products = await prisma.product.findMany({
     where: { published: true, soldOut: false },
     select: {
@@ -41,15 +42,18 @@ export default async function ProductList() {
     }
   })
 
-  // Serialize the products data
-  const serializedProducts: ProductWithoutDates[] = products.map(product => ({
+  return products.map(product => ({
     ...product,
     price: product.price.toString(),
   }))
+})
+
+export default async function ProductList() {
+  const products = await getProducts()
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {serializedProducts.map((product) => (
+      {products.map((product) => (
         <div key={product.id} className="border rounded-lg p-4">
           <Image
             src={product.image1 || '/placeholder.png'}
