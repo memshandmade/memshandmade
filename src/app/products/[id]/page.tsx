@@ -1,18 +1,28 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import SingleProduct from '@/components/SingleProduct'
-import { Product } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
-export default async function ProductPage(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
+type Product = Prisma.ProductGetPayload<{}>
+
+interface PageProps {
+  params: { id: string }
+}
+
+export default async function ProductPage({ params }: PageProps) {
+  const productId = parseInt(params.id)
+
+  if (isNaN(productId)) {
+    return notFound()
+  }
+
   const product = await prisma.product.findUnique({
-    where: { id: parseInt(params.id) }
-  }) as Product | null
+    where: { id: productId }
+  })
 
   if (!product) {
-    notFound()
+    return notFound()
   }
 
   return <SingleProduct product={product} />
 }
-

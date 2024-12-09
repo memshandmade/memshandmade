@@ -33,10 +33,8 @@ async function processImage(file: File): Promise<Buffer> {
   return processedBuffer
 }
 
-export async function PUT(
-  request: NextRequest & { params: { id: string } }
-): Promise<NextResponse> {
-  const id = parseInt(request.params.id)
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  const id = parseInt(params.id)
   const formData = await request.formData()
 
   const name = formData.get('name') as string
@@ -91,10 +89,8 @@ export async function PUT(
   }
 }
 
-export async function PATCH(
-  request: NextRequest & { params: { id: string } }
-): Promise<NextResponse> {
-  const id = parseInt(request.params.id)
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+  const id = parseInt(params.id)
   const { published, soldOut } = await request.json()
 
   try {
@@ -113,50 +109,28 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  request: NextRequest & { params: { id: string } }
-): Promise<NextResponse> {
-  const id = parseInt(request.params.id)
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  const id = parseInt(params.id)
 
   try {
-    // First, fetch the product to get its image URLs
-    const product = await prisma.product.findUnique({
-      where: { id },
-      select: { image1: true, image2: true, image3: true, image4: true, image5: true }
-    })
-
-    if (!product) {
-      return NextResponse.json({ error: 'Product not found' }, { status: 404 })
-    }
-
-    // Delete the product from the database
-    await prisma.product.delete({
+    const product = await prisma.product.delete({
       where: { id },
     })
 
     // Delete images from Cloudinary
     const imagesToDelete = [product.image1, product.image2, product.image3, product.image4, product.image5]
       .filter((url): url is string => url !== null)
-    
     for (const imageUrl of imagesToDelete) {
-      try {
-        const publicId = imageUrl.split('/').pop()?.split('.')[0] ?? ''
-        if (publicId) {
-          await cloudinary.uploader.destroy(`soft-toys/${publicId}`)
-        }
-      } catch (error) {
-        console.error(`Failed to delete image from Cloudinary: ${imageUrl}`, error)
-        // Continue with the next image even if one fails
+      const publicId = imageUrl.split('/').pop()?.split('.')[0] ?? ''
+      if (publicId) {
+        await cloudinary.uploader.destroy(`soft-toys/${publicId}`)
       }
     }
 
     return NextResponse.json({ message: 'Product deleted successfully' })
   } catch (error) {
     console.error('Failed to delete product:', error)
-    return NextResponse.json({ 
-      error: 'Failed to delete product', 
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 })
   }
 }
 

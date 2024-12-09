@@ -1,43 +1,45 @@
-/* eslint-disable */
-'use client'
-
 interface NewProductFormProps {
   // Add any props here if needed
 }
 
-
+'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import Image from 'next/image'
+import NextImage from 'next/image'
 
 const MAX_FILE_SIZE = 1024 * 1024 // 1MB
 
 async function compressImage(file: File): Promise<Blob> {
-  const imageBitmap = await createImageBitmap(file);
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d')!;
-
-  const scaleFactor = Math.sqrt(MAX_FILE_SIZE / file.size);
-  canvas.width = imageBitmap.width * scaleFactor;
-  canvas.height = imageBitmap.height * scaleFactor;
-
-  ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
-
   return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => {
-        if (blob) {
-          resolve(blob);
-        } else {
-          reject(new Error('Canvas to Blob conversion failed'));
-        }
-      },
-      file.type,
-      0.7
-    );
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d')!;
+        const scaleFactor = Math.sqrt(MAX_FILE_SIZE / file.size);
+        canvas.width = img.width * scaleFactor;
+        canvas.height = img.height * scaleFactor;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Canvas to Blob conversion failed'));
+            }
+          },
+          file.type,
+          0.7
+        );
+      };
+    };
+    reader.onerror = (error) => reject(error);
   });
 }
 
@@ -188,7 +190,7 @@ export default function NewProductForm(props: NewProductFormProps) {
         <div className="mt-2 flex flex-wrap gap-2">
           {imagePreviews.map((preview, index) => (
             <div key={index} className="relative">
-              <Image src={preview} alt={`Preview ${index + 1}`} width={100} height={100} className="object-cover" />
+              <NextImage src={preview} alt={`Preview ${index + 1}`} width={100} height={100} className="object-cover" />
               <button
                 type="button"
                 onClick={() => removeImage(index)}
@@ -232,4 +234,3 @@ export default function NewProductForm(props: NewProductFormProps) {
     </form>
   )
 }
-
