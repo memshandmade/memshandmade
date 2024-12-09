@@ -15,3 +15,4 @@ export default async function ProductPage(props: { params: Promise<{ id: string 
 
   return <SingleProduct product={product} />
 }
+
