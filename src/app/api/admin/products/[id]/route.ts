@@ -33,6 +33,9 @@ async function processImage(file: File): Promise<Buffer> {
   return processedBuffer
 }
 
+
+
+
 export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const id = parseInt(params.id)
@@ -50,14 +53,18 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
   for (let i = 1; i <= 5; i++) {
     const image = formData.get(`image${i}`) as File | null
     if (image) {
-      const buffer = await image.arrayBuffer()
-      const base64Image = Buffer.from(buffer).toString('base64')
-      const dataURI = `data:${image.type};base64,${base64Image}`
-      
-      const result = await cloudinary.uploader.upload(dataURI, {
-        folder: 'soft-toys',
-      })
-      imageUrls.push(result.secure_url)
+      try {
+        const processedImageBuffer = await processImage(image)
+        const base64Image = processedImageBuffer.toString('base64')
+        const dataURI = `data:${image.type};base64,${base64Image}`
+        
+        const result = await cloudinary.uploader.upload(dataURI, {
+          folder: 'soft-toys',
+        })
+        imageUrls.push(result.secure_url)
+      } catch (error) {
+        console.error(`Failed to process and upload image ${i}:`, error)
+      }
     }
   }
 
@@ -85,7 +92,6 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 })
   }
 }
-
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   const id = parseInt(params.id)
