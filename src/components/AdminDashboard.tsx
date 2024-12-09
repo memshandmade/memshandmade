@@ -108,6 +108,16 @@ export default function AdminDashboard() {
 
   return (
     <div>
+      <Link 
+        href="/"
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        onClick={() => {
+          // Force a hard refresh of the page
+          window.location.href = '/'
+        }}
+      >
+        View Front Page
+      </Link>
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
           <strong className="font-bold">Error:</strong>
@@ -189,4 +199,3 @@ export default function AdminDashboard() {
     </div>
   )
 }
-
