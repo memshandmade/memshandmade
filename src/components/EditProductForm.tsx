@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from 'next/image'
+import ToolBar from "@/components/ToolBar";
 
 interface Product {
   id: number
@@ -37,13 +38,47 @@ export default function EditProductForm({ product }: { product: Product }) {
   const router = useRouter()
 
   const introEditor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit.configure({
+
+        
+        // Configure an included extension
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),      
+    ],
     content: product.intro,
+    editorProps: {
+      attributes: {
+        class:
+          "rounded-md border min-h-[150px] border-input bg-background focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
+          
+      },
+    },
+    immediatelyRender: false,    
   })
 
   const descriptionEditor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit.configure({
+
+        
+        // Configure an included extension
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),      
+    ],
     content: product.description,
+    editorProps: {
+      attributes: {
+        class:
+          "rounded-md border min-h-[150px] border-input bg-background focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
+          
+      },
+    },
+    immediatelyRender: false,    
   })
 
   useEffect(() => {
@@ -119,10 +154,12 @@ export default function EditProductForm({ product }: { product: Product }) {
       </div>
       <div>
         <label htmlFor="intro" className="block text-sm font-medium text-gray-700">Intro</label>
+        <ToolBar editor={introEditor} />
         <EditorContent editor={introEditor} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
       </div>
       <div>
         <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+        <ToolBar editor={descriptionEditor} />
         <EditorContent editor={descriptionEditor} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
       </div>
       <div>
