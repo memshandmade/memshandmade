@@ -11,8 +11,8 @@ datasource db {
 model Product {
   id          Int      @id @default(autoincrement())
   name        String
-  intro       String
-  description String   @db.Text
+  intro       String   @db.LongText
+  description String   @db.LongText
   price       Decimal  @db.Decimal(10, 2)
   image1      String?
   image2      String?
