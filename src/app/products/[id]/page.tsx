@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import SingleProduct from '@/components/SingleProduct'
+
 import { Product } from '@prisma/client'
 
 export default async function ProductPage(props: { params: Promise<{ id: string }> }) {

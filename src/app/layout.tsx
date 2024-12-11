@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 import Footer from "@/components/Footer"
+import Icons from "@/components/HeadIcons"
 import Image from "next/image";
 import Link from "next/link"
 
@@ -36,17 +37,17 @@ export default function RootLayout({
           className="object-cover w-full "
         />
           
-        </Link>
-       
+      </Link>
+      <Icons />
 
 
         
  
       </div>
     </header>
-    <hr className="my-12 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
+    <hr className="my-2 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
     <div className="my-6 ">{children}
-    <hr className="my-12 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
+    <hr className="my-8 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
       <Footer />
      </div>
       </body>

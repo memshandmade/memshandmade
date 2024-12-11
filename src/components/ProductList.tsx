@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Prisma } from '@prisma/client'
 import { cache } from 'react'
+import { Button } from "@/components/ui/button"
 
 type ProductWithoutDates = Omit<Prisma.ProductGetPayload<{
   select: {
@@ -67,12 +68,17 @@ export default async function ProductList() {
           <h2 className="text-xl font-semibold">{product.name}</h2>
           <div className="text-gray-600 mb-2" dangerouslySetInnerHTML={{ __html: product.intro }} />
           <p className="font-bold mb-2">${parseFloat(product.price).toFixed(2)}</p>
-          <Link 
-            href={`/products/${product.id}`}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 inline-block"
-          >
-            View Details
-          </Link>
+y
+
+
+          <Button asChild size="lg" className="w-full">
+            <Link 
+              href={`/products/${product.id}`}
+            >
+              View Details
+            </Link>
+          </Button>
+
         </div>
       ))}
     </div>
