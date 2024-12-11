@@ -1,7 +1,7 @@
 "use client"
 
 import Image from 'next/image'
-import Link from 'next/link'
+
 import { useState } from "react"
 import { Prisma } from '@prisma/client'
 import { Card, CardContent } from "@/components/ui/card"
@@ -24,7 +24,7 @@ interface Product {
 }
 
 export default function SingleProduct({ product }: { product: Product }) {
-  const images = [product.image1, product.image2, product.image3, product.image4, product.image5].filter(Boolean)
+
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   return (
     <Card className="w-full max-w-3xl mx-auto">
