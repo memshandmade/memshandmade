@@ -1,10 +1,9 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/VY5qbP7dTNi
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
+"use client"
+
+
 import Link from "next/link"
 import { JSX, SVGProps } from "react"
+import { FloatingWhatsApp } from 'react-floating-whatsapp'
 
 
 export default function Icons() {
@@ -29,7 +28,17 @@ export default function Icons() {
             <InstagramIcon className="h-6 w-6" />
             <span className="sr-only">Instagram</span>
           </Link>
-
+          <FloatingWhatsApp
+        phoneNumber='+66812731313' // Required
+        accountName='Mem Moss' // Optional
+        avatar='/mem.webp' // Optional
+        
+        statusMessage='Available' // Optional
+        placeholder='Send me a message...' // Optional
+        allowEsc={true} // Optional
+        className='relative'
+        
+      />
         </div>
       </div>
     </div>
