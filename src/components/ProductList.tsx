@@ -68,7 +68,7 @@ export default async function ProductList() {
           <h2 className="text-xl font-semibold">{product.name}</h2>
           <div className="text-gray-600 mb-2" dangerouslySetInnerHTML={{ __html: product.intro }} />
           <p className="font-bold mb-2">thb {parseFloat(product.price).toFixed(2)}</p>
-y
+
 
 
           <Button asChild size="lg" className="w-full">
