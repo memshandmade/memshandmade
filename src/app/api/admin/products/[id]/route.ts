@@ -33,11 +33,7 @@ async function processImage(file: File): Promise<Buffer> {
   return processedBuffer
 }
 
-
-
-
-export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   const id = parseInt(params.id)
   const formData = await request.formData()
 
@@ -50,6 +46,7 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
 
   const imageUrls: string[] = []
 
+  // Process new image uploads
   for (let i = 1; i <= 5; i++) {
     const image = formData.get(`image${i}`) as File | null
     if (image) {
@@ -68,6 +65,14 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
     }
   }
 
+  // Add existing images
+  for (let i = 1; i <= 5; i++) {
+    const existingImage = formData.get(`existingImage${i}`) as string | null
+    if (existingImage) {
+      imageUrls.push(existingImage)
+    }
+  }
+
   try {
     const product = await prisma.product.update({
       where: { id },
@@ -78,11 +83,11 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
         price,
         published,
         soldOut,
-        image1: imageUrls[0] || undefined,
-        image2: imageUrls[1] || undefined,
-        image3: imageUrls[2] || undefined,
-        image4: imageUrls[3] || undefined,
-        image5: imageUrls[4] || undefined,
+        image1: imageUrls[0] || null,
+        image2: imageUrls[1] || null,
+        image3: imageUrls[2] || null,
+        image4: imageUrls[3] || null,
+        image5: imageUrls[4] || null,
       },
     })
 
@@ -93,9 +98,10 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
   }
 }
 
-
-export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+): Promise<NextResponse> {
   const id = parseInt(params.id)
   const { published, soldOut } = await request.json()
 
@@ -115,11 +121,7 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
   }
 }
 
-
-
-
-  export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
-    const params = await props.params;
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const id = parseInt(params.id)
 
   try {
