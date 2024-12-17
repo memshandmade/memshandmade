@@ -33,51 +33,48 @@ async function processImage(file: File): Promise<Buffer> {
   return processedBuffer
 }
 
+export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  try {
+    const id = parseInt(params.id)
+    const formData = await request.formData()
 
+    const name = formData.get('name') as string
+    const intro = formData.get('intro') as string
+    const description = formData.get('description') as string
+    const price = parseFloat(formData.get('price') as string)
+    const published = formData.get('published') === 'true'
+    const soldOut = formData.get('soldOut') === 'true'
 
+    const imageUrls: string[] = []
 
-  export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
-    const params = await props.params;
-  const id = parseInt(params.id)
-  const formData = await request.formData()
-
-  const name = formData.get('name') as string
-  const intro = formData.get('intro') as string
-  const description = formData.get('description') as string
-  const price = parseFloat(formData.get('price') as string)
-  const published = formData.get('published') === 'true'
-  const soldOut = formData.get('soldOut') === 'true'
-
-  const imageUrls: string[] = []
-
-  // Process new image uploads
-  for (let i = 1; i <= 5; i++) {
-    const image = formData.get(`image${i}`) as File | null
-    if (image) {
-      try {
-        const processedImageBuffer = await processImage(image)
-        const base64Image = processedImageBuffer.toString('base64')
-        const dataURI = `data:${image.type};base64,${base64Image}`
-        
-        const result = await cloudinary.uploader.upload(dataURI, {
-          folder: 'soft-toys',
-        })
-        imageUrls.push(result.secure_url)
-      } catch (error) {
-        console.error(`Failed to process and upload image ${i}:`, error)
+    // Process new image uploads
+    for (let i = 1; i <= 5; i++) {
+      const image = formData.get(`image${i}`) as File | null
+      if (image) {
+        try {
+          const processedImageBuffer = await processImage(image)
+          const base64Image = processedImageBuffer.toString('base64')
+          const dataURI = `data:${image.type};base64,${base64Image}`
+          
+          const result = await cloudinary.uploader.upload(dataURI, {
+            folder: 'soft-toys',
+          })
+          imageUrls.push(result.secure_url)
+        } catch (error) {
+          console.error(`Failed to process and upload image ${i}:`, error)
+        }
       }
     }
-  }
 
-  // Add existing images
-  for (let i = 1; i <= 5; i++) {
-    const existingImage = formData.get(`existingImage${i}`) as string | null
-    if (existingImage) {
-      imageUrls.push(existingImage)
+    // Add existing images
+    for (let i = 1; i <= 5; i++) {
+      const existingImage = formData.get(`existingImage${i}`) as string | null
+      if (existingImage) {
+        imageUrls.push(existingImage)
+      }
     }
-  }
 
-  try {
     const product = await prisma.product.update({
       where: { id },
       data: {
@@ -95,19 +92,22 @@ async function processImage(file: File): Promise<Buffer> {
       },
     })
 
-    return NextResponse.json(product)
+    return NextResponse.json({ success: true, product })
   } catch (error) {
     console.error('Failed to update product:', error)
-    return NextResponse.json({ error: 'Failed to update product' }, { status: 500 })
+    return NextResponse.json({ success: false, error: 'Failed to update product' }, { status: 500 })
   }
 }
 
-export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  const id = parseInt(params.id)
-  const { published, soldOut } = await request.json()
 
+
+
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const params = await props.params;
   try {
+    const id = parseInt(params.id)
+    const { published, soldOut } = await request.json()
+
     const product = await prisma.product.update({
       where: { id },
       data: { 
@@ -116,18 +116,20 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
       },
     })
 
-    return NextResponse.json(product)
+    return NextResponse.json({ success: true, product })
   } catch (error) {
     console.error('Failed to update product:', error)
-    return NextResponse.json({ error: 'Failed to update product' }, { status: 500 })
+    return NextResponse.json({ success: false, error: 'Failed to update product' }, { status: 500 })
   }
 }
 
+
+
 export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const id = parseInt(params.id)
-
   try {
+    const id = parseInt(params.id)
+
     const product = await prisma.product.delete({
       where: { id },
     })
@@ -142,10 +144,10 @@ export async function DELETE(request: NextRequest, props: { params: Promise<{ id
       }
     }
 
-    return NextResponse.json({ message: 'Product deleted successfully' })
+    return NextResponse.json({ success: true, message: 'Product deleted successfully' })
   } catch (error) {
     console.error('Failed to delete product:', error)
-    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 })
+    return NextResponse.json({ success: false, error: 'Failed to delete product' }, { status: 500 })
   }
 }
 

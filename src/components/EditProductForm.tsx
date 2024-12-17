@@ -86,7 +86,7 @@ export default function EditProductForm({ product }: { product: Product }) {
     formData.append('price', price)
     formData.append('published', published.toString())
     formData.append('soldOut', soldOut.toString())
-    
+  
     // Append new images
     images.forEach((image, index) => {
       formData.append(`image${index + 1}`, image)
@@ -105,11 +105,12 @@ export default function EditProductForm({ product }: { product: Product }) {
         body: formData,
       })
 
-      if (response.ok) {
+      const data = await response.json()
+
+      if (data.success) {
         router.push('/admin')
       } else {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Unknown error')
+        throw new Error(data.error || 'Unknown error')
       }
     } catch (error) {
       console.error('Error updating product:', error)
