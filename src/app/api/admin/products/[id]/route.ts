@@ -11,18 +11,15 @@ cloudinary.config({
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
 
-async function processImage(file: File): Promise<Buffer> {
-  const arrayBuffer = await file.arrayBuffer()
-  const buffer = Buffer.from(arrayBuffer)
-  
-  let processedBuffer = await sharp(buffer)
+async function processImage(file: Buffer): Promise<Buffer> {
+  let processedBuffer = await sharp(file)
     .resize(1600, 1200, { fit: 'inside', withoutEnlargement: true })
     .toBuffer()
 
   if (processedBuffer.length > MAX_FILE_SIZE) {
     let quality = 80
     while (processedBuffer.length > MAX_FILE_SIZE && quality > 10) {
-      processedBuffer = await sharp(buffer)
+      processedBuffer = await sharp(file)
         .resize(1600, 1200, { fit: 'inside', withoutEnlargement: true })
         .jpeg({ quality })
         .toBuffer()
@@ -35,46 +32,47 @@ async function processImage(file: File): Promise<Buffer> {
 
 export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
+  const id = parseInt(params.id)
+  const formData = await request.formData()
+
+  const name = formData.get('name') as string
+  const intro = formData.get('intro') as string
+  const description = formData.get('description') as string
+  const price = parseFloat(formData.get('price') as string)
+  const published = formData.get('published') === 'true'
+  const soldOut = formData.get('soldOut') === 'true'
+
+  const imageUrls: string[] = []
+
+  // Process new image uploads
+  for (let i = 1; i <= 5; i++) {
+    const image = formData.get(`image${i}`) as File | null
+    if (image) {
+      try {
+        const buffer = await image.arrayBuffer()
+        const processedImageBuffer = await processImage(Buffer.from(buffer))
+        const base64Image = processedImageBuffer.toString('base64')
+        const dataURI = `data:${image.type};base64,${base64Image}`
+        
+        const result = await cloudinary.uploader.upload(dataURI, {
+          folder: 'soft-toys',
+        })
+        imageUrls.push(result.secure_url)
+      } catch (error) {
+        console.error(`Failed to process and upload image ${i}:`, error)
+      }
+    }
+  }
+
+  // Add existing images
+  for (let i = 1; i <= 5; i++) {
+    const existingImage = formData.get(`existingImage${i}`) as string | null
+    if (existingImage) {
+      imageUrls.push(existingImage)
+    }
+  }
+
   try {
-    const id = parseInt(params.id)
-    const formData = await request.formData()
-
-    const name = formData.get('name') as string
-    const intro = formData.get('intro') as string
-    const description = formData.get('description') as string
-    const price = parseFloat(formData.get('price') as string)
-    const published = formData.get('published') === 'true'
-    const soldOut = formData.get('soldOut') === 'true'
-
-    const imageUrls: string[] = []
-
-    // Process new image uploads
-    for (let i = 1; i <= 5; i++) {
-      const image = formData.get(`image${i}`) as File | null
-      if (image) {
-        try {
-          const processedImageBuffer = await processImage(image)
-          const base64Image = processedImageBuffer.toString('base64')
-          const dataURI = `data:${image.type};base64,${base64Image}`
-          
-          const result = await cloudinary.uploader.upload(dataURI, {
-            folder: 'soft-toys',
-          })
-          imageUrls.push(result.secure_url)
-        } catch (error) {
-          console.error(`Failed to process and upload image ${i}:`, error)
-        }
-      }
-    }
-
-    // Add existing images
-    for (let i = 1; i <= 5; i++) {
-      const existingImage = formData.get(`existingImage${i}`) as string | null
-      if (existingImage) {
-        imageUrls.push(existingImage)
-      }
-    }
-
     const product = await prisma.product.update({
       where: { id },
       data: {
@@ -92,10 +90,10 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
       },
     })
 
-    return NextResponse.json({ success: true, product })
+    return NextResponse.json(product)
   } catch (error) {
     console.error('Failed to update product:', error)
-    return NextResponse.json({ success: false, error: 'Failed to update product' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to update product' }, { status: 500 })
   }
 }
 

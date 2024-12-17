@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import Image from 'next/image'
 
 interface Product {
   id: number
@@ -20,6 +20,8 @@ interface Product {
   published: boolean
   soldOut: boolean
 }
+
+const MAX_FILE_SIZE = 500 * 1024 // 500KB
 
 export default function EditProductForm({ product }: { product: Product }) {
   const [name, setName] = useState(product.name)
@@ -47,22 +49,24 @@ export default function EditProductForm({ product }: { product: Product }) {
     content: product.description,
   })
 
-  useEffect(() => {
-    if (introEditor && !introEditor.isDestroyed) {
-      introEditor.commands.setContent(product.intro)
-    }
-    if (descriptionEditor && !descriptionEditor.isDestroyed) {
-      descriptionEditor.commands.setContent(product.description)
-    }
-  }, [product, introEditor, descriptionEditor])
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
-    const newImages = [...images, ...files].slice(0, 5)
-    setImages(newImages)
+    const newImages: File[] = []
+    const newPreviews: string[] = []
 
-    const newPreviews = newImages.map(file => URL.createObjectURL(file))
-    setImagePreviews(newPreviews)
+    for (const file of files) {
+      try {
+        const compressedBlob = await compressImage(file)
+        const compressedFile = new File([compressedBlob], file.name, { type: file.type })
+        newImages.push(compressedFile)
+        newPreviews.push(URL.createObjectURL(compressedFile))
+      } catch (error) {
+        console.error('Error compressing image:', error)
+      }
+    }
+
+    setImages((prevImages) => [...prevImages, ...newImages].slice(0, 5))
+    setImagePreviews((prevPreviews) => [...prevPreviews, ...newPreviews].slice(0, 5))
   }
 
   const removeImage = (index: number) => {
@@ -75,46 +79,70 @@ export default function EditProductForm({ product }: { product: Product }) {
     setImagePreviews(newPreviews)
   }
 
+  async function compressImage(file: File): Promise<Blob> {
+    const imageBitmap = await createImageBitmap(file)
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')!
+
+    const scaleFactor = Math.sqrt(MAX_FILE_SIZE / file.size)
+    canvas.width = imageBitmap.width * scaleFactor
+    canvas.height = imageBitmap.height * scaleFactor
+
+    ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height)
+
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob)
+          } else {
+            reject(new Error('Canvas to Blob conversion failed'))
+          }
+        },
+        file.type,
+        0.7
+      )
+    })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    const formData = new FormData()
-    formData.append('name', name)
-    formData.append('intro', introEditor?.getHTML() || '')
-    formData.append('description', descriptionEditor?.getHTML() || '')
-    formData.append('price', price)
-    formData.append('published', published.toString())
-    formData.append('soldOut', soldOut.toString())
-  
-    // Append new images
-    images.forEach((image, index) => {
-      formData.append(`image${index + 1}`, image)
-    })
-
-    // Append existing image URLs
-    imagePreviews.forEach((preview, index) => {
-      if (preview.startsWith('http')) {
-        formData.append(`existingImage${index + 1}`, preview)
-      }
-    })
-
     try {
+      const formData = new FormData()
+      formData.append('name', name)
+      formData.append('intro', introEditor?.getHTML() || '')
+      formData.append('description', descriptionEditor?.getHTML() || '')
+      formData.append('price', price)
+      formData.append('published', published.toString())
+      formData.append('soldOut', soldOut.toString())
+
+      // Append images
+      images.forEach((image, index) => {
+        formData.append(`image${index + 1}`, image)
+      })
+
+      // Append existing image URLs
+      imagePreviews.forEach((preview, index) => {
+        if (preview.startsWith('http')) {
+          formData.append(`existingImage${index + 1}`, preview)
+        }
+      })
+
       const response = await fetch(`/api/admin/products/${product.id}`, {
         method: 'PUT',
         body: formData,
       })
 
-      const data = await response.json()
-
-      if (data.success) {
-        router.push('/admin')
-      } else {
-        throw new Error(data.error || 'Unknown error')
+      if (!response.ok) {
+        throw new Error('Failed to update product')
       }
+
+      router.push('/admin')
     } catch (error) {
       console.error('Error updating product:', error)
-      alert(`Failed to update product: ${(error as Error).message}`)
+      alert('Failed to update product. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
