@@ -102,10 +102,8 @@ async function processImage(file: File): Promise<Buffer> {
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-): Promise<NextResponse> {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const id = parseInt(params.id)
   const { published, soldOut } = await request.json()
 
