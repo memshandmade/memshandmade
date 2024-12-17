@@ -33,7 +33,11 @@ async function processImage(file: File): Promise<Buffer> {
   return processedBuffer
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+
+
+
+  export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
   const id = parseInt(params.id)
   const formData = await request.formData()
 
