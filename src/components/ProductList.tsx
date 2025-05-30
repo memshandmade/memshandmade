@@ -72,7 +72,7 @@ export default async function ProductList() {
           {product.soldOut? (
                             <>
                                 
-                                <p className="stroke-destructive">Sold Out</p>
+                                <p className="stroke-destructive soldout">Sold Out</p>
                             </>
                         ) : (
                             <>
