@@ -66,7 +66,7 @@ export default async function ProductList() {
             className="w-full h-64 object-cover mb-4"
           />
           <h2 className="text-xl font-semibold">{product.name}</h2>
-          <div className="text-gray-600 mb-2 h-[120px]" dangerouslySetInnerHTML={{ __html: product.intro }} />
+          <div className="text-gray-600 mb-2 h-[100px]" dangerouslySetInnerHTML={{ __html: product.intro }} />
           <p className="font-bold mb-2">thb {parseFloat(product.price).toFixed(2)}</p>
 
           {product.soldOut? (
