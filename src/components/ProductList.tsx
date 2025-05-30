@@ -83,7 +83,7 @@ export default async function ProductList() {
 
           <p className="text-2xl font-bold mb-4">{product.soldOut}</p>
 
-          <Button asChild size="lg" className="w-full">
+          <Button asChild size="lg" className="w-full buttoncolor">
             <Link 
               href={`/products/${product.id}`}
             >
