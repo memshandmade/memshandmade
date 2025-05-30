@@ -69,7 +69,19 @@ export default async function ProductList() {
           <div className="text-gray-600 mb-2" dangerouslySetInnerHTML={{ __html: product.intro }} />
           <p className="font-bold mb-2">thb {parseFloat(product.price).toFixed(2)}</p>
 
+          {product.soldOut? (
+                            <>
+                                
+                                <p className="stroke-destructive">Sold Out</p>
+                            </>
+                        ) : (
+                            <>
+                                
+                                <p>Available</p>
+                            </>
+                        )}
 
+          <p className="text-2xl font-bold mb-4">{product.soldOut}</p>
 
           <Button asChild size="lg" className="w-full">
             <Link 
