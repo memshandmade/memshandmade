@@ -27,7 +27,7 @@ export default function SingleProduct({ product }: { product: Product }) {
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   return (
-    <Card className="w-full max-w-3xl mx-auto">
+    <Card className="w-full max-w-3xl mx-auto flex flex-col h-full">
         
       <Image
         src={product.image1}
