@@ -96,24 +96,9 @@ export async function GET() {
     if (category && category !== "All") {
       whereClause.category = category
     }
-
     const products = await prisma.product.findMany({
       where: whereClause,
-      select: {
-        id: true,
-        name: true,
-        published: true,
-        soldOut: true,
-        price: true,
-        category: true,
-        image1: true,
-        image2: true,
-        image3: true,
-        image4: true,
-        image5: true,
-        intro: true,
-        description: true,
-      },
+      select: { id: true, name: true, published: true, soldOut: true, price: true, category: true, image1: true, image2: true, image3: true, image4: true, image5: true, intro: true, description: true },
     })
     
     // Convert Decimal to string for JSON serialization
