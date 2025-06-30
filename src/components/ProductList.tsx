@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 interface Product {
   id: number
@@ -96,13 +97,28 @@ export default function ProductList() {
             </div>
             <h2 className="text-xl font-semibold">{product.name}</h2>
             <div className="text-gray-600 mb-2" dangerouslySetInnerHTML={{ __html: product.intro }} />
-            <p className="font-bold mb-2">${Number.parseFloat(product.price).toFixed(2)}</p>
-            <Link
+            <p className="font-bold mb-2">thb {Number.parseFloat(product.price).toFixed(2)}</p>
+            
+            {product.soldOut? (
+                  <>
+                      
+                      <p className="stroke-destructive soldout">Sold Out</p>
+                  </>
+              ) : (
+                  <>
+                      
+                      <p>Available</p>
+                  </>
+              )}
+
+          <p className="text-2xl font-bold mb-4">{product.soldOut}</p>
+          <Button asChild size="lg" className="w-full buttoncolor">
+            <Link 
               href={`/products/${product.id}`}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 inline-block"
             >
               View Details
             </Link>
+          </Button>
           </div>
         ))}
       </div>
