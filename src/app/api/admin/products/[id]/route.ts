@@ -39,6 +39,7 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
   const intro = formData.get('intro') as string
   const description = formData.get('description') as string
   const price = parseFloat(formData.get('price') as string)
+  const category = (formData.get("category") as string) || "General"
   const published = formData.get('published') === 'true'
   const soldOut = formData.get('soldOut') === 'true'
 
@@ -80,6 +81,7 @@ export async function PUT(request: NextRequest, props: { params: Promise<{ id: s
         intro,
         description,
         price,
+        category,
         published,
         soldOut,
         image1: imageUrls[0] || null,

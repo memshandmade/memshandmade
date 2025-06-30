@@ -12,6 +12,7 @@ interface Product {
   intro: string
   description: string
   price: string
+  category: string
   image1: string | null
   image2: string | null
   image3: string | null
@@ -22,10 +23,23 @@ interface Product {
 }
 
 const MAX_FILE_SIZE = 500 * 1024 // 500KB
+const CATEGORIES = [
+  "General",
+  "Bears",
+  "Rabbits",
+  "Dogs",
+  "Cats",
+  "Farm Animals",
+  "Wild Animals",
+  "Fantasy",
+  "Holiday",
+  "Baby Toys",
+]
 
 export default function EditProductForm({ product }: { product: Product }) {
   const [name, setName] = useState(product.name)
   const [price, setPrice] = useState(product.price)
+  const [category, setCategory] = useState(product.category || "General")
   const [images, setImages] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([
     product.image1,
@@ -115,6 +129,7 @@ export default function EditProductForm({ product }: { product: Product }) {
       formData.append('intro', introEditor?.getHTML() || '')
       formData.append('description', descriptionEditor?.getHTML() || '')
       formData.append('price', price)
+      formData.append("category", category)
       formData.append('published', published.toString())
       formData.append('soldOut', soldOut.toString())
 
@@ -160,6 +175,24 @@ export default function EditProductForm({ product }: { product: Product }) {
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           required
         />
+      </div>
+      <div>
+        <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+          Category
+        </label>
+        <select
+          id="category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          required
+        >
+          {CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label htmlFor="intro" className="block text-sm font-medium text-gray-700">Intro</label>

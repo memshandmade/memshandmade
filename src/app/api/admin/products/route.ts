@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
   const intro = formData.get('intro') as string
   const description = formData.get('description') as string
   const price = parseFloat(formData.get('price') as string)
+  const category = (formData.get("category") as string) || "General"
   const published = formData.get('published') === 'true'
   const soldOut = formData.get('soldOut') === 'true'
 
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
         intro,
         description,
         price,
+        category,
         published,
         soldOut,
         image1: imageUrls[0] || null,
@@ -87,8 +89,31 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
+    const { searchParams } = new URL(request.url)
+    const category = searchParams.get("category")
+
+    const whereClause: any = { published: true }
+    if (category && category !== "All") {
+      whereClause.category = category
+    }
+
     const products = await prisma.product.findMany({
-      select: { id: true, name: true, published: true, soldOut: true, price: true, image1: true, image2: true, image3: true, image4: true, image5: true, intro: true, description: true },
+      where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        published: true,
+        soldOut: true,
+        price: true,
+        category: true,
+        image1: true,
+        image2: true,
+        image3: true,
+        image4: true,
+        image5: true,
+        intro: true,
+        description: true,
+      },
     })
     
     // Convert Decimal to string for JSON serialization

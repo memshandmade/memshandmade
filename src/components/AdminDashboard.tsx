@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 interface Product {
   id: number
   name: string
+  category: string
   published: boolean
   soldOut: boolean
   price: string
@@ -142,6 +143,9 @@ export default function AdminDashboard() {
             <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
               Name
             </th>
+           <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+              Category
+            </th>            
             <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
               Published
             </th>
@@ -161,6 +165,11 @@ export default function AdminDashboard() {
             <tr key={product.id}>
               <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                 {product.name}
+              </td>
+              <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                  {product.category}
+                </span>
               </td>
               <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                 <button
