@@ -13,10 +13,22 @@ interface NewProductFormProps {
 }
 
 const MAX_FILE_SIZE = 500 * 1024 // 500KB
-
+const CATEGORIES = [
+  "General",
+  "Bears",
+  "Rabbits",
+  "Dogs",
+  "Cats",
+  "Farm Animals",
+  "Wild Animals",
+  "Fantasy",
+  "Holiday",
+  "Baby Toys",
+]
 export default function NewProductForm({}: NewProductFormProps) {
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
+  const [category, setCategory] = useState("General")
   const [images, setImages] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [published, setPublished] = useState(false)
@@ -128,6 +140,7 @@ export default function NewProductForm({}: NewProductFormProps) {
       formData.append('intro', introEditor?.getHTML() || '')
       formData.append('description', descriptionEditor?.getHTML() || '')
       formData.append('price', price)
+      formData.append("category", category)
       formData.append('published', published.toString())
       formData.append('soldOut', soldOut.toString())
 
@@ -167,6 +180,24 @@ export default function NewProductForm({}: NewProductFormProps) {
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           required
         />
+      </div>
+       <div>
+        <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+          Category
+        </label>
+        <select
+          id="category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          required
+        >
+          {CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label htmlFor="intro" className="block text-sm font-medium text-gray-700">Intro</label>

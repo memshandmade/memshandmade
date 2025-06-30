@@ -14,6 +14,7 @@ model Product {
   intro       String   @db.LongText
   description String   @db.LongText
   price       Decimal  @db.Decimal(10, 2)
+  category    String   @default("General")
   image1      String?
   image2      String?
   image3      String?
