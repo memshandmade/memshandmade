@@ -23,14 +23,7 @@ interface Product {
 const CATEGORIES = [
   "All",
   "General",
-  "Bears",
-  "Rabbits",
-  "Dogs",
-  "Cats",
-  "Farm Animals",
-  "Wild Animals",
-  "Fantasy",
-  "Holiday",
+  "Art Dolls",
   "Baby Toys",
 ]
 

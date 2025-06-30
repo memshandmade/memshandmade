@@ -15,14 +15,7 @@ interface NewProductFormProps {
 const MAX_FILE_SIZE = 500 * 1024 // 500KB
 const CATEGORIES = [
   "General",
-  "Bears",
-  "Rabbits",
-  "Dogs",
-  "Cats",
-  "Farm Animals",
-  "Wild Animals",
-  "Fantasy",
-  "Holiday",
+  "Art Dolls",
   "Baby Toys",
 ]
 export default function NewProductForm({}: NewProductFormProps) {
