@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { v2 as cloudinary } from 'cloudinary'
 import sharp from 'sharp'
+import { type Prisma } from "@prisma/client"
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -87,12 +88,12 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const category = searchParams.get("category")
 
-    const whereClause: any = { published: true }
+    const whereClause: Prisma.ProductWhereInput = { published: true }
     if (category && category !== "All") {
       whereClause.category = category
     }
