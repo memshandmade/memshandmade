@@ -64,7 +64,7 @@ export default function ProductList() {
     <div>
       {/* Category Filter */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-3">Filter by Category</h3>
+        <h2 className="text-lg font-semibold mb-3">Filter by Category</h2>
         <div className="flex flex-wrap gap-2">
           {CATEGORIES.map((category) => (
             <button
