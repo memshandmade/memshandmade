@@ -31,7 +31,7 @@ export default function Icons() {
           <FloatingWhatsApp
         phoneNumber='+66812731313' // Required
         accountName='Mem Moss' // Optional
-        avatar='/mem.webp' // Optional
+        avatar='/memsmall.webp' // Optional
         
         statusMessage='Available' // Optional
         placeholder='Send me a message...' // Optional
