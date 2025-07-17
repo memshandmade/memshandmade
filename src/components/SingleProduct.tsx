@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Prisma } from '@prisma/client'
+import Footer from "@/components/Footer"
 
 
 interface Product {
@@ -63,6 +64,8 @@ export default function SingleProduct({ product }: { product: Product }) {
           <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to Cart</button>
         </div>
       </div>
+      <hr className="my-8 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
+      <Footer />
     </div>
   )
 }

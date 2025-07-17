@@ -129,12 +129,12 @@ export default function ProductList() {
           <p className="text-gray-500">No products found in this category.</p>
         </div>
       )}
-
-          {!loading && (
-            <footer>
-              <Footer />
-            </footer>
-          )}
+      <hr className="my-8 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
+      {!loading && (
+        <footer>
+          <Footer />
+        </footer>
+      )}
 
     </div>
     
