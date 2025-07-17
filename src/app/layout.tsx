@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
-import Footer from "@/components/Footer"
+
 import Icons from "@/components/HeadIcons"
 import Image from "next/image";
 import Link from "next/link"
