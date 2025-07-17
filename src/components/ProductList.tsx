@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import Footer from "@/components/Footer"
 
 interface Product {
   id: number
@@ -131,7 +132,7 @@ export default function ProductList() {
 
           {!loading && (
             <footer>
-              <p>This is the delayed footer.</p>
+              <Footer />
             </footer>
           )}
 

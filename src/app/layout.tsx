@@ -48,7 +48,7 @@ export default function RootLayout({
     <hr className="my-2 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
     <div className="my-6 ">{children}
     <hr className="my-8 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
-      <Footer />
+      
      </div>
       </body>
     </html>
