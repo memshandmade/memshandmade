@@ -84,10 +84,10 @@ export default function ProductList() {
         {products.map((product) => (
           <div key={product.id} className="border rounded-lg p-4">
             <Image
-              src={product.image1 || "/placeholder.png"}
+              src={product.image1 || "/placeholder1.png"}
               alt={product.name}
               width={300}
-              height={300}
+              height={256}
               className="w-full h-64 object-cover mb-4"
             />
             <div className="mb-2">
