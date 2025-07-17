@@ -128,6 +128,14 @@ export default function ProductList() {
           <p className="text-gray-500">No products found in this category.</p>
         </div>
       )}
+
+          {!loading && (
+            <footer>
+              <p>This is the delayed footer.</p>
+            </footer>
+          )}
+
     </div>
+    
   )
 }
