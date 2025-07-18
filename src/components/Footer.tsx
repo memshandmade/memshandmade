@@ -14,20 +14,20 @@ export default function Footer() {
         <div className="flex items-center gap-4">
           <Link
             href="#"
-            className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+            className="text-black hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
             prefetch={false}
           >
             <ArrowUpIcon className="h-6 w-6" />
             <span className="sr-only">Back to top</span>
           </Link>
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+          <p className="text-sm font-medium text-black dark:text-gray-400">
             &copy; 2024 Memshandmade.com All rights reserved.
           </p>
         </div>
         <div className="flex items-center gap-4">
           <Link
             href="https://www.facebook.com/memshandmade"
-            className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+            className="text-black hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
             prefetch={false}
           >
             <FacebookIcon className="h-6 w-6" />
