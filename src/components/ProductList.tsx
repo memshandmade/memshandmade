@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import Footer from "@/components/Footer"
+import { getCloudinaryBlurDataURL, getSimpleBlurDataURL } from "@/lib/cloudinary"
 
 interface Product {
   id: number
@@ -64,14 +63,14 @@ export default function ProductList() {
     <div>
       {/* Category Filter */}
       <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Filter by Category</h2>
+        <h3 className="text-lg font-semibold mb-3">Filter by Category</h3>
         <div className="flex flex-wrap gap-2">
           {CATEGORIES.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                selectedCategory === category ? "buttoncolor text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                selectedCategory === category ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
               {category}
@@ -81,49 +80,41 @@ export default function ProductList() {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {products.map((product, index) => (
-          <div key={product.id} className="border rounded-lg p-4">
-            <Image
-              src={product.image1 || "/placeholder1.png"}
-              alt={product.name}
-              width={300}
-              height={256}
-              priority={index === 0}
-              loading={index === 0 ? "eager" : "lazy"}
-              className="w-full h-64 object-cover mb-4"
-            />
-            <div className="mb-2">
-              <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                {product.category}
-              </span>
-            </div>
-            <h2 className="text-xl font-semibold">{product.name}</h2>
-            <div className="text-gray-600 mb-2" dangerouslySetInnerHTML={{ __html: product.intro }} />
-            <p className="font-bold mb-2">thb {Number.parseFloat(product.price).toFixed(2)}</p>
-            
-            {product.soldOut? (
-                  <>
-                      
-                      <p className="stroke-destructive soldout">Sold Out</p>
-                  </>
-              ) : (
-                  <>
-                      
-                      <p>Available</p>
-                  </>
-              )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {products.map((product, index) => {
+          const imageSrc = product.image1 || "/placeholder.png"
+          const isCloudinaryImage = imageSrc.includes("cloudinary.com")
 
-          <p className="text-2xl font-bold mb-4">{product.soldOut}</p>
-          <Button asChild size="lg" className="w-full buttoncolor">
-            <Link 
-              href={`/products/${product.id}`}
-            >
-              View Details
-            </Link>
-          </Button>
-          </div>
-        ))}
+          return (
+            <div key={product.id} className="border rounded-lg p-4">
+              <Image
+                src={imageSrc || "/placeholder.svg"}
+                alt={product.name}
+                width={300}
+                height={300}
+                className="w-full h-64 object-cover mb-4"
+                priority={index === 0}
+                loading={index === 0 ? "eager" : "lazy"}
+                placeholder={isCloudinaryImage ? "blur" : "empty"}
+                blurDataURL={isCloudinaryImage ? getCloudinaryBlurDataURL(imageSrc) : getSimpleBlurDataURL()}
+              />
+              <div className="mb-2">
+                <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                  {product.category}
+                </span>
+              </div>
+              <h2 className="text-xl font-semibold">{product.name}</h2>
+              <div className="text-gray-600 mb-2" dangerouslySetInnerHTML={{ __html: product.intro }} />
+              <p className="font-bold mb-2">${Number.parseFloat(product.price).toFixed(2)}</p>
+              <Link
+                href={`/products/${product.id}`}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 inline-block"
+              >
+                View Details
+              </Link>
+            </div>
+          )
+        })}
       </div>
 
       {products.length === 0 && (
@@ -131,14 +122,6 @@ export default function ProductList() {
           <p className="text-gray-500">No products found in this category.</p>
         </div>
       )}
-      <hr className="my-8 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400" />
-      {!loading && (
-        <footer>
-          <Footer />
-        </footer>
-      )}
-
     </div>
-    
   )
 }
