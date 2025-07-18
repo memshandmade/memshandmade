@@ -82,13 +82,15 @@ export default function ProductList() {
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
+        {products.map((product, index) => (
           <div key={product.id} className="border rounded-lg p-4">
             <Image
               src={product.image1 || "/placeholder1.png"}
               alt={product.name}
               width={300}
               height={256}
+              priority={index === 0}
+              loading={index === 0 ? "eager" : "lazy"}
               className="w-full h-64 object-cover mb-4"
             />
             <div className="mb-2">
